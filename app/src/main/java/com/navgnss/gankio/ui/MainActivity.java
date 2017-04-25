@@ -9,38 +9,28 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.navgnss.gankio.R;
 import com.navgnss.gankio.util.GankApi;
 
-import org.reactivestreams.Subscriber;
 
-
-
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.Subject;
-import okhttp3.OkHttpClient;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.subscribers.ResourceSubscriber;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.HttpException;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Subscription;
-import rx.functions.Action1;
+
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
             .serializeNulls()
             .create();
     private String EndUrl="http://gank.io/api/";
-    private Subscription subscription;
+    private Disposable subscription;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,39 +60,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        Retrofit.Builder builder=new Retrofit.Builder().baseUrl("http://gank.io/api/")
-//                .addConverterFactory(GsonConverterFactory.create());
-//        Retrofit gankRest=builder.build();
-//        GankApi gankApi=gankRest.create(GankApi.class);
 
-        /*gankApi.getFuLi(1)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        Log.d("TAG","FUCK RX! 收到数据："+s);
-                    }
-                });*/
-
-       RxJavaCallAdapterFactory rxAdapter=RxJavaCallAdapterFactory.createWithScheduler(rx.schedulers.Schedulers.io());
         Retrofit.Builder builder=new Retrofit.Builder()
                                     .baseUrl(EndUrl)
                                     .addConverterFactory(GsonConverterFactory.create(gson))
-                                    .addCallAdapterFactory(rxAdapter);
+                                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         Retrofit retrofit=builder.build();
         GankApi gankApi=retrofit.create(GankApi.class);
 
-        Observable<String> call= gankApi.getFuLi(1);
+         Flowable<String> call= gankApi.getFuLi(1);
 
-        subscription= (Subscription) call
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
+        CompositeDisposable composite=new CompositeDisposable();
+        composite.add(call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribeWith(new ResourceSubscriber<String>() {
+            @Override
+            public void onNext(String s) {
+                Log.d(TAG,"接收到数据："+s);
+            }
 
-                    }
-                });
+            @Override
+            public void onError(Throwable t) {
+                t.printStackTrace();
+                Log.d(TAG,"fuck@@@ 出错了！"+t.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG,"onComplete！");
+            }
+        }));
 
     }
 
@@ -130,6 +116,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        subscription.unsubscribe();
+        subscription.dispose();
     }
 }
