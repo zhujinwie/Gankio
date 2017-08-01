@@ -13,7 +13,9 @@ import android.widget.TextView;
 import com.navgnss.gankio.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.MemoryHandler;
 
 /**
  * Created by ZhuJinWei on 2017/4/27.
@@ -28,6 +30,8 @@ public class FluidAdapter extends RecyclerView.Adapter<FluidAdapter.MyViewHolder
 
         this.context= context;
         this.datas= datas;
+
+
 
     }
 
@@ -50,7 +54,7 @@ public class FluidAdapter extends RecyclerView.Adapter<FluidAdapter.MyViewHolder
         Picasso.with(context).load(datas.get(position*2)).into(holder.iv);
         holder.tv.setText(datas.get(position*2+1));
 
-        holder.iv.setLayoutParams(new LinearLayout.LayoutParams(80,60+20*(int)Math.random()));
+        holder.iv.getLayoutParams().height=450+(int)Math.random()*500;
 
     }
 
