@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.navgnss.gankio.bean.MyEndUrl.URL_GANK;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG="ui.MainActivity";
     public RecyclerView mRecyclerView;
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
      * */
     public void getImageUrl(){
 
-        composite.add(gankApi.getFuLi(page)
+        /*composite.add(gankApi.getFuLi(page)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new ResourceSubscriber<FuLiData>() {
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete() {
 
             }
-        }));
+        }));*/
 
 
 
