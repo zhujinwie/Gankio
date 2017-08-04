@@ -2,57 +2,45 @@ package com.navgnss.gankio.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
 import com.navgnss.gankio.R;
 import com.navgnss.gankio.adapter.FluidAdapter;
-import com.navgnss.gankio.bean.FuLiData;
 import com.navgnss.gankio.util.GankApi;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.ResourceSubscriber;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static com.navgnss.gankio.bean.MyEndUrl.URL_GANK;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TAG="ui.MainActivity";
-    public RecyclerView mRecyclerView;
-    public FluidAdapter mFluidAdapter;
+    private final String TAG=this.getClass().getSimpleName();
+
+    RecyclerView mRecyclerView;
+
+    FloatingActionButton mFab;
+
+    FluidAdapter mFluidAdapter;
     List<String> datas;
     int page=1;
-
     final static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .serializeNulls()
             .create();
-
-
     private CompositeDisposable composite;
-
     private static  Retrofit retrofit;
     private static  GankApi gankApi;
     static {
@@ -63,26 +51,15 @@ public class MainActivity extends BaseActivity {
                 .build();
          gankApi=retrofit.create(GankApi.class);
     }
-
     private Map<String,String> options;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"onCreate!");
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        datas=new ArrayList<>();
-        composite=new CompositeDisposable();
-        mFluidAdapter=new FluidAdapter(this,datas);
-        mRecyclerView=(RecyclerView) findViewById(R.id.main_rv_fuli);
-
         initRecyclerView();
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab= (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     getImageUrl();
@@ -94,13 +71,18 @@ public class MainActivity extends BaseActivity {
      * 设置recyclerView
      * */
     private void initRecyclerView() {
+        mRecyclerView= (RecyclerView) findViewById(R.id.recyclerview_main);
+        composite=new CompositeDisposable();
+        datas=new ArrayList<>();
+        mFluidAdapter=new FluidAdapter(this,datas);
+
         RecyclerView.LayoutManager layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mFluidAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //mRecyclerView.addItemDecoration();
-
-        mRecyclerView.addOnScrollListener(getMyScrollListener(layoutManager));
+        //TODO 滑动刷新有bug
+        //mRecyclerView.addOnScrollListener(getMyScrollListener(layoutManager));
     }
     /**
      * RecyclerView的滑动刷新
@@ -110,7 +92,6 @@ public class MainActivity extends BaseActivity {
         int lastVisibleItem=((LinearLayoutManager)layoutManager).findLastVisibleItemPosition();
 
         return null;
-
     }
 
 

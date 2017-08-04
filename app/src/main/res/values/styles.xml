@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="actionBarSize">@dimen/toolbar_minHeight</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
