@@ -22,6 +22,9 @@ import android.widget.LinearLayout;
 import com.navgnss.gankio.MyApplication;
 import com.navgnss.gankio.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by ZhuJinWei on 2017/8/2.
  *
@@ -35,7 +38,7 @@ public class BaseActivity extends AppCompatActivity {
     /**是否沉浸式状态栏*/
     private boolean isSetStatusBar = true;
     /**是否允许全屏*/
-    private boolean isAllowFullScreen = true;
+    private boolean isAllowFullScreen = false;
     /**是否允许旋转屏幕*/
     private boolean isAllowScreenRoate = true;
 
@@ -43,6 +46,7 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isDebug;
 
     private String App_Name;
+
     Toolbar mToolBar;
 
     private LinearLayout rootLayout = null; //根布局
@@ -52,8 +56,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Zog(TAG+"-->onCreate!");
 
+        Zog(TAG+"-->onCreate!");
         isDebug= MyApplication.isDebug;
         App_Name=MyApplication.APP_NAME;
 
@@ -85,7 +89,9 @@ public class BaseActivity extends AppCompatActivity {
             if(isSetStatusBar){
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
                     WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
-                    localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                    localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                            | localLayoutParams.flags);
+
                 }
 
             }
@@ -95,6 +101,7 @@ public class BaseActivity extends AppCompatActivity {
             if(!isAllowScreenRoate){
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
+
             else{
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }

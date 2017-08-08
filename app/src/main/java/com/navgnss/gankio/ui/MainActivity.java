@@ -2,7 +2,7 @@ package com.navgnss.gankio.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +20,9 @@ import com.navgnss.gankio.util.GankApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,11 +34,11 @@ public class MainActivity extends BaseActivity {
 
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.fab)
     FloatingActionButton mFab;
 
     FluidAdapter mFluidAdapter;
     List<String> datas;
-    int page=1;
     final static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .serializeNulls()
@@ -51,14 +54,14 @@ public class MainActivity extends BaseActivity {
                 .build();
          gankApi=retrofit.create(GankApi.class);
     }
-    private Map<String,String> options;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate!");
         setContentView(R.layout.activity_main);
-        initRecyclerView();
-        mFab= (FloatingActionButton) findViewById(R.id.fab);
+        ButterKnife.bind(this);
+       // initRecyclerView();
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
