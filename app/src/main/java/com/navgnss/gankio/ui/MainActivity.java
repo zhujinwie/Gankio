@@ -3,6 +3,7 @@ package com.navgnss.gankio.ui;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,10 +17,10 @@ import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.navgnss.gankio.R;
 import com.navgnss.gankio.adapter.FluidAdapter;
+import com.navgnss.gankio.adapter.TabFragmentAdapter;
 import com.navgnss.gankio.util.GankApi;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +38,10 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.fab)
     FloatingActionButton mFab;
 
+    @BindView(R.id.vp_tab_pager)
+    ViewPager mViewPager;
+
+    TabFragmentAdapter mAdapter;
     FluidAdapter mFluidAdapter;
     List<String> datas;
     final static Gson gson = new GsonBuilder()
@@ -62,7 +67,8 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
        // initRecyclerView();
-        mFab.setOnClickListener(new View.OnClickListener() {
+        initTabAndViewPager();
+        mFab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                     getImageUrl();
@@ -70,6 +76,16 @@ public class MainActivity extends BaseActivity {
         });
 
     }
+
+    /**
+     * 初始化Tab选项栏和ViewPager
+     * */
+    private void initTabAndViewPager() {
+
+
+
+    }
+
     /**
      * 设置recyclerView
      * */
