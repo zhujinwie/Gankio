@@ -1,13 +1,18 @@
 package com.navgnss.gankio.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 
+
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -18,6 +23,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.navgnss.gankio.R;
 import com.navgnss.gankio.adapter.FluidAdapter;
 import com.navgnss.gankio.adapter.TabFragmentAdapter;
+import com.navgnss.gankio.fragment.AndroidFragment;
 import com.navgnss.gankio.util.GankApi;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +47,13 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.vp_tab_pager)
     ViewPager mViewPager;
 
+    @BindView(R.id.tablayout)
+    TabLayout mTabLayout;
+
     TabFragmentAdapter mAdapter;
     FluidAdapter mFluidAdapter;
     List<String> datas;
+    String[] titles;
     final static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .serializeNulls()
@@ -83,8 +93,29 @@ public class MainActivity extends BaseActivity {
     private void initTabAndViewPager() {
 
 
+        titles=new String[5];
+        titles[0]="Android";
+        titles[1]="IOS";
+        titles[2]="前端";
+        titles[3]="福利";
+        titles[4]="视频";
 
+        List<Fragment> fragments=new ArrayList<>();
+        for(int i=0;i<titles.length;i++){
+            AndroidFragment fragment = new AndroidFragment();
+            Bundle bundle=new Bundle();
+            bundle.putString("titile",titles[i]);
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
+        }
+        mAdapter=new TabFragmentAdapter(getSupportFragmentManager(),titles,MainActivity.this,fragments);
+        mViewPager.setAdapter(mAdapter);
+
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setTabTextColors(getResources().getColor(R.color.tabTextColor), Color.WHITE);
+        mTabLayout.
     }
+
 
     /**
      * 设置recyclerView
