@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.navgnss.gankio.bean.base.ResultData;
 
-import java.util.Date;
 import java.util.List;
 
 /**

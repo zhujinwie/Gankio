@@ -1,17 +1,14 @@
 package com.navgnss.gankio.ui;
 
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,9 +18,6 @@ import android.widget.LinearLayout;
 
 import com.navgnss.gankio.MyApplication;
 import com.navgnss.gankio.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by ZhuJinWei on 2017/8/2.
@@ -146,7 +140,7 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * 自定义设计ToolBar 的方法，由子类来实现
      * */
-    protected void setCustomToolBar(Toolbar mToolBar) {
+    public void setCustomToolBar(Toolbar mToolBar) {
         Zog(TAG+"--< setCustomToolBar 方法执行了！");
 
     }
