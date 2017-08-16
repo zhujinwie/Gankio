@@ -28,23 +28,38 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME="gankio_news.db";
     public static final int DATABASE_VERSION=1;
 
-    public static final String DATABASE_CREATE="";
-
-    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
+    public static final String DATABASE_CREATE="CREATE TABLE"+TABLE_NAME
+            +"("+_ID+" INTEGER PRIMAY KEY AUTOINCREMENT, "
+            +CREATEDAT+" TEXT NOT NULL, "
+            +DESC+" TEXT NOT NULL, "
+            +PUBLISHEDAT+" TEXT NOT NULL, "
+            +SOURCE+" TEXT  NOT NULL, "
+            +TYPE+" TEXT NUT NULL, "
+            +URL+"  TEXT NOT NULL, "
+            +USED+" NUMERIC NOT NULL, "
+            +WHO+" TEXT NOT NULL, "
+            +IMAGES+" BLOB);";
 
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
+    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+        super(context, name, factory, version, errorHandler);
+    }
+
+    public DBHelper(Context context){
+        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(DATABASE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS"+TABLE_NAME);
+        onCreate(db);
     }
 }
