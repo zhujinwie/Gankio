@@ -5,4 +5,11 @@ package com.navgnss.gankio.bean;
  */
 
 public class DailyData {
+
+
+
+
+
+
+
 }

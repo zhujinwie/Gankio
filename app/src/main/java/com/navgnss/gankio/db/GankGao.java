@@ -3,14 +3,14 @@ package com.navgnss.gankio.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.navgnss.gankio.bean.GankData;
 import com.navgnss.gankio.bean.base.ResultData;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
@@ -27,6 +27,9 @@ public class GankGao {
     private SQLiteDatabase db;
     private String[] allColums={DBHelper._ID,DBHelper.CREATEDAT,DBHelper.DESC,DBHelper.PUBLISHEDAT,
                             DBHelper.SOURCE,DBHelper.TYPE,DBHelper.URL,DBHelper.USED,DBHelper.WHO,DBHelper.IMAGES};
+
+    private String INSERT_ARRAY="INSERT INTO iamges VALUES ";
+
 
     public GankGao(Context context){
         this.context=context;
@@ -58,7 +61,8 @@ public class GankGao {
         long insertId=db.insert(DBHelper.TABLE_NAME,null,values);
         Cursor cursor=db.query(DBHelper.TABLE_NAME,allColums,DBHelper._ID+"="+insertId,null,null,null,null);
         cursor.moveToFirst();
-        ResultData resultData=cursorToNewsList(cursor);
+        ResultData resultData=cursorToNewsGank(cursor);
+        insertArray(data.getImageList(),db);
         cursor.close();
         return resultData;
     }
@@ -78,8 +82,10 @@ public class GankGao {
         values.put(DBHelper.USED,data.isUsed());
         values.put(DBHelper.WHO,data.getWho());
 
+        updateArray(data.getImageList(),db);
         db.update(DBHelper.TABLE_NAME,values,DBHelper._ID+"="+data.getId(),null);
 
+        db.close();
     }
 
 
@@ -88,13 +94,32 @@ public class GankGao {
      * */
     public void insertOrUpdateGank(ResultData data){
 
+        String id=data.getId();
+        if(newOfTheId(id)!=null){
+            updateResult(data);
+        }
+        else{
+            insertGank(data);
+        }
+    }
 
+    /**
+     * 根据id查询
+     * **/
+    private ResultData newOfTheId(String id) {
+
+        Cursor cursor=db.query(DBHelper.TABLE_NAME,allColums,DBHelper._ID+" = "+id,null,null,null,null);
+        cursor.moveToFirst();
+        ResultData data = cursorToNewsGank(cursor);
+        cursor.close();
+        return data;
 
     }
 
-
-
-    private ResultData cursorToNewsList(Cursor cursor) {
+    /**
+     *
+     * */
+    private ResultData cursorToNewsGank(Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             return new GsonBuilder().create().fromJson(cursor.getString(2),new TypeToken<ResultData>() {
             }.getType());
@@ -102,7 +127,46 @@ public class GankGao {
             return null;
         }
     }
+    /**
+     * 保存 数组
+     * */
+    public void insertArray(List<String> strList,SQLiteDatabase db){
 
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        try{
+            ObjectOutputStream oos=new ObjectOutputStream(baos);
+            oos.writeObject(strList);
+            oos.flush();
 
+            byte data[] = baos.toByteArray();
+            oos.close();
+            baos.close();
+            db.execSQL(INSERT_ARRAY,new Object[]{data});
+            //db.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 更新数组
+     * */
+    public void updateArray(List<String> strList,SQLiteDatabase db){
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        try{
+            ObjectOutputStream oos=new ObjectOutputStream(baos);
+            oos.writeObject(strList);
+            oos.flush();
+
+            byte data[] = baos.toByteArray();
+            oos.close();
+            baos.close();
+            db.execSQL("UPDATE "+DBHelper.TABLE_NAME+" SET "+DBHelper.IMAGES,new Object[]{data});
+           // db.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }
